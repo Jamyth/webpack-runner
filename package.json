@@ -1,11 +1,14 @@
 {
-  "name": "webpack-runner",
+  "name": "@iamyth/webpack-runner",
   "version": "1.0.0",
   "description": "A Webpack Runner",
   "main": "dist/index.js",
   "author": "Jamyth",
   "license": "MIT",
   "private": false,
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "run-script": "ts-node --project config/tsconfig.script.json",
     "format": "yarn run-script script/format.ts",
