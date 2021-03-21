@@ -1,2 +1,7 @@
+/test/node_modules/
 /node_modules/
+/test/dist/
 /dist/
+/test/.webpack-cache
+yarn-error.log
+*.DS_Store

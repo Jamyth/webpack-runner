@@ -1,0 +1,12 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "extends": "../config/tsconfig.base.json",
+    "compilerOptions": {
+        "lib": ["ES2019"],
+        "target": "ES2015",
+        "module": "CommonJS",
+        "rootDir": ".",
+        "noEmit": true
+    },
+    "include": ["../script"]
+}

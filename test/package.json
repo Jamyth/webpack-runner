@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.2",
+    "ts-node": "^9.1.1"
+  },
+  "scripts": {
+    "run-script": "ts-node --project script/tsconfig.json",
+    "start": "yarn run-script script/start.ts",
+    "build": "yarn run-script script/build.ts"
+  }
+}
