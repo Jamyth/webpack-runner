@@ -50,6 +50,7 @@ export interface WebpackConfigGeneratorOptions {
      * export class WrappedTableComponent extends React.PureComponent<Props, State> {}
      * ```
      */
+    tsconfigFilePath?: string;
     prioritizedExtensionPrefixes?: string[];
     /**
      * List of module resolution aliases to dynamically compute from `env`.

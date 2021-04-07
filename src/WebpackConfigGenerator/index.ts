@@ -44,7 +44,7 @@ export class WebpackConfigGenerator {
         this.env = (yargs.argv.env as string) ?? null;
         this.projectDirectory = options.projectDirectory;
         this.projectSrcDirectory = path.join(options.projectDirectory, "src");
-        this.tsconfigFilepath = path.join(options.projectDirectory, "tsconfig.json");
+        this.tsconfigFilepath = options.tsconfigFilePath ?? path.join(options.projectDirectory, "tsconfig.json");
 
         this.enableProfiling = Boolean(yargs.argv.profile);
         this.maxEntryPointKiloByte = options.maxEntryPointKiloByte ?? Constant.maxEntryPointKiloByte;
