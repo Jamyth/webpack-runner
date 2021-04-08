@@ -1,6 +1,6 @@
 {
   "name": "@iamyth/webpack-runner",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "A Webpack Runner",
   "main": "dist/index.js",
   "author": "Jamyth",

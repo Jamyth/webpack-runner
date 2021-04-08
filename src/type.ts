@@ -50,6 +50,7 @@ export interface WebpackConfigGeneratorOptions {
      * export class WrappedTableComponent extends React.PureComponent<Props, State> {}
      * ```
      */
+    externalModules?: string[];
     tsconfigFilePath?: string;
     prioritizedExtensionPrefixes?: string[];
     /**
@@ -108,7 +109,7 @@ export interface DynamicConfigResolver {
      * `require("merchant-conf/current/assets/logo.png")` with
      * `require("merchant-conf/dev/assets/logo.png")`.
      */
-    resolveByEnv(env: string): string;
+    resolver: string | null | ((env: string | null) => string | null);
 }
 
 export interface EntryDescriptor {

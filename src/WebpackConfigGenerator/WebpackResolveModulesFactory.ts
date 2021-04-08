@@ -1,9 +1,10 @@
 interface WebpackResolveModulesFactoryOptions {
     projectSrcDirectory: string;
+    externalModules?: string[];
 }
 
 export class WebpackResolveModulesFactory {
-    static generate({projectSrcDirectory}: WebpackResolveModulesFactoryOptions): string[] {
+    static generate({projectSrcDirectory, externalModules = []}: WebpackResolveModulesFactoryOptions): string[] {
         const resolveModules = [];
 
         /**
@@ -32,6 +33,8 @@ export class WebpackResolveModulesFactory {
          * Put at the end so this has the lowest precedence.
          */
         resolveModules.push("node_modules");
+
+        externalModules.forEach((module) => resolveModules.push(module));
 
         return resolveModules;
     }

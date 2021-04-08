@@ -72,10 +72,11 @@ export class WebpackConfigGenerator {
         });
         this.resolveModules = WebpackResolveModulesFactory.generate({
             projectSrcDirectory: this.projectSrcDirectory,
+            externalModules: options.externalModules,
         });
         this.resolveAliases = WebpackResolveAliasFactory.generate({
             env: this.env,
-            dynamicConfigResolvers: options.dynamicConfigResolvers ?? [],
+            resolvers: options.dynamicConfigResolvers ?? [],
         });
 
         this.logger.info("Config constructed:");

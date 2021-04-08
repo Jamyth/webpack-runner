@@ -21,6 +21,7 @@ export default function ({types: t}: typeof babel): babel.PluginObj<State> {
                     },
                 } = path;
 
+                // TODO: Check Coil-React
                 if (!importSource.includes("injectLifecycle")) {
                     return;
                 }
