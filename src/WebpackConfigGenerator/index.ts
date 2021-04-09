@@ -117,6 +117,7 @@ export class WebpackConfigGenerator {
             module: {
                 rules: [
                     Rule.ts({tsconfigFilepath: this.tsconfigFilepath, transpileOnly: true, fastRefresh: true}),
+                    Rule.stylesheet({minimize: false}),
                     Rule.image(),
                     Rule.inline(),
                     // prettier-format-preserve
@@ -166,6 +167,7 @@ export class WebpackConfigGenerator {
                 },
                 minimizer: [
                     Plugin.minimizer.terser({sourceMap: true}),
+                    Plugin.minimizer.cssMinimizer(),
                     // prettier-format-preserve
                 ],
             },
@@ -177,6 +179,7 @@ export class WebpackConfigGenerator {
             module: {
                 rules: [
                     Rule.ts({tsconfigFilepath: this.tsconfigFilepath, transpileOnly: false, fastRefresh: false}),
+                    Rule.stylesheet({minimize: true}),
                     Rule.image(),
                     Rule.inline(),
                     // prettier-format-preserve
@@ -185,6 +188,7 @@ export class WebpackConfigGenerator {
             plugins: [
                 ...this.htmlWebpackPluginInstances,
                 Plugin.crossOriginScriptTag(),
+                Plugin.fileOutput.miniCssExtract({enableProfiling: this.enableProfiling}),
                 ...(this.enableProfiling ? [Plugin.webpack.progress({enableProfiling: true})] : []), // disable to not bloat up CI logs
                 // prettier-format-preserve
             ],
