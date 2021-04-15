@@ -191,6 +191,7 @@ export class WebpackConfigGenerator {
                 Plugin.fileOutput.miniCssExtract({enableProfiling: this.enableProfiling}),
                 ...(this.enableProfiling ? [Plugin.webpack.progress({enableProfiling: true})] : []), // disable to not bloat up CI logs
                 // prettier-format-preserve
+                Plugin.serviceWorker.generateSW(),
             ],
         };
         if (this.verbose) {
