@@ -52,6 +52,7 @@ export interface WebpackConfigGeneratorOptions {
      */
     externalModules?: string[];
     tsconfigFilePath?: string;
+    enableServiceWorker?: boolean;
     prioritizedExtensionPrefixes?: string[];
     /**
      * List of module resolution aliases to dynamically compute from `env`.

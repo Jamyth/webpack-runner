@@ -23,6 +23,7 @@ export class WebpackConfigGenerator {
     readonly projectDirectory: string;
     readonly projectSrcDirectory: string;
     readonly tsconfigFilepath: string;
+    readonly enableServiceWorker: boolean;
 
     readonly enableProfiling: boolean;
     readonly maxEntryPointKiloByte: number;
@@ -45,6 +46,7 @@ export class WebpackConfigGenerator {
         this.projectDirectory = options.projectDirectory;
         this.projectSrcDirectory = path.join(options.projectDirectory, "src");
         this.tsconfigFilepath = options.tsconfigFilePath ?? path.join(options.projectDirectory, "tsconfig.json");
+        this.enableServiceWorker = options.enableServiceWorker ?? false;
 
         this.enableProfiling = Boolean(yargs.argv.profile);
         this.maxEntryPointKiloByte = options.maxEntryPointKiloByte ?? Constant.maxEntryPointKiloByte;
@@ -191,7 +193,7 @@ export class WebpackConfigGenerator {
                 Plugin.fileOutput.miniCssExtract({enableProfiling: this.enableProfiling}),
                 ...(this.enableProfiling ? [Plugin.webpack.progress({enableProfiling: true})] : []), // disable to not bloat up CI logs
                 // prettier-format-preserve
-                Plugin.serviceWorker.generateSW(),
+                ...(this.enableServiceWorker ? [Plugin.serviceWorker.generateSW()] : []),
             ],
         };
         if (this.verbose) {
