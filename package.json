@@ -1,6 +1,6 @@
 {
   "name": "@iamyth/webpack-runner",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "A Webpack Runner",
   "main": "dist/index.js",
   "author": "Jamyth",
@@ -24,6 +24,8 @@
     "css-minimizer-webpack-plugin": "2.0.0",
     "fs-extra": "^10.0.0",
     "html-webpack-plugin": "5.3.1",
+    "less": "4.1.1",
+    "less-loader": "10.0.1",
     "mini-css-extract-plugin": "1.6.0",
     "postcss": "8.2.13",
     "postcss-loader": "5.2.0",

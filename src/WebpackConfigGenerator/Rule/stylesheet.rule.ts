@@ -47,6 +47,17 @@ function styleLoader(): webpack.RuleSetUseItem {
     };
 }
 
+function lessLoader(): webpack.RuleSetUseItem {
+    return {
+        loader: require.resolve("less-loader"),
+        options: {
+            lessOptions: {
+                javascriptEnabled: true,
+            },
+        },
+    };
+}
+
 /**
  * Handles dependency requests to stylesheet assets (".css", ".sass")
  * with `minimize: true` by `sassc` -> transform to js module -> inject to DOM as <style> tag,
@@ -58,8 +69,21 @@ function styleLoader(): webpack.RuleSetUseItem {
  * @see https://webpack.js.org/loaders/postcss-loader/
  * @see https://webpack.js.org/loaders/style-loader/
  */
-export function stylesheetRule({minimize}: StylesheetRuleDeps): webpack.RuleSetRule {
-    const use: webpack.RuleSetUseItem[] = minimize
+export function stylesheetRule({minimize}: StylesheetRuleDeps): webpack.RuleSetRule[] {
+    const cssUse: webpack.RuleSetUseItem[] = minimize
+        ? [
+              miniCssExtractPluginLoader(),
+              cssLoader(2),
+              postcssLoader(),
+              // prettier-format-preserve
+          ]
+        : [
+              styleLoader(),
+              cssLoader(1),
+              // prettier-format-preserve
+          ];
+
+    const sassUse: webpack.RuleSetUseItem[] = minimize
         ? [
               miniCssExtractPluginLoader(),
               cssLoader(2),
@@ -74,14 +98,51 @@ export function stylesheetRule({minimize}: StylesheetRuleDeps): webpack.RuleSetR
               // prettier-format-preserve
           ];
 
-    return {
-        test: RegExpUtil.fileExtension(".css", ".sass"),
-        use,
-        // Declare all css/sass imports as side effects (not to be considered
-        // as dead code), regardsass of the containing package claims to be
-        // otherwise. This prevents css from being tree shaken.
-        // Currently webpack does not add a warning / throw an error for this.
-        // See: https://github.com/webpack/webpack/issues/6571
-        sideEffects: true,
-    };
+    const lessUse: webpack.RuleSetUseItem[] = minimize
+        ? [
+              miniCssExtractPluginLoader(),
+              cssLoader(2),
+              postcssLoader(),
+              lessLoader(),
+              // prettier-format-preserve
+          ]
+        : [
+              styleLoader(),
+              cssLoader(1),
+              lessLoader(),
+              // prettier-format-preserve
+          ];
+
+    return [
+        {
+            test: RegExpUtil.fileExtension(".css"),
+            use: cssUse,
+            // Declare all css/sass imports as side effects (not to be considered
+            // as dead code), regardsass of the containing package claims to be
+            // otherwise. This prevents css from being tree shaken.
+            // Currently webpack does not add a warning / throw an error for this.
+            // See: https://github.com/webpack/webpack/issues/6571
+            sideEffects: true,
+        },
+        {
+            test: RegExpUtil.fileExtension(".sass", ".scss"),
+            use: sassUse,
+            // Declare all css/sass imports as side effects (not to be considered
+            // as dead code), regardsass of the containing package claims to be
+            // otherwise. This prevents css from being tree shaken.
+            // Currently webpack does not add a warning / throw an error for this.
+            // See: https://github.com/webpack/webpack/issues/6571
+            sideEffects: true,
+        },
+        {
+            test: RegExpUtil.fileExtension(".less"),
+            use: lessUse,
+            // Declare all css/sass imports as side effects (not to be considered
+            // as dead code), regardsass of the containing package claims to be
+            // otherwise. This prevents css from being tree shaken.
+            // Currently webpack does not add a warning / throw an error for this.
+            // See: https://github.com/webpack/webpack/issues/6571
+            sideEffects: true,
+        },
+    ];
 }

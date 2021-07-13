@@ -119,7 +119,7 @@ export class WebpackConfigGenerator {
             module: {
                 rules: [
                     Rule.ts({tsconfigFilepath: this.tsconfigFilepath, transpileOnly: true, fastRefresh: true}),
-                    Rule.stylesheet({minimize: false}),
+                    ...Rule.stylesheet({minimize: false}),
                     Rule.image(),
                     Rule.inline(),
                     // prettier-format-preserve
@@ -181,7 +181,7 @@ export class WebpackConfigGenerator {
             module: {
                 rules: [
                     Rule.ts({tsconfigFilepath: this.tsconfigFilepath, transpileOnly: false, fastRefresh: false}),
-                    Rule.stylesheet({minimize: true}),
+                    ...Rule.stylesheet({minimize: true}),
                     Rule.image(),
                     Rule.inline(),
                     // prettier-format-preserve
