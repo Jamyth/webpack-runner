@@ -11,14 +11,6 @@ import {RegExpUtil} from "./RegExpUtil";
 export function imageRule(): webpack.RuleSetRule {
     return {
         test: RegExpUtil.fileExtension(".png", ".jpeg", ".jpg", ".gif", ".svg"),
-        type: "asset",
-        generator: {
-            filename: "static/img/[name][hash:8][ext][query]",
-        },
-        parser: {
-            dataUrlCondition: {
-                maxSize: 1024,
-            },
-        },
+        type: "asset/resource",
     };
 }
