@@ -1,7 +1,7 @@
 import {cssMinimizerPlugin, miniCssExtractPlugin} from "./css.plugin";
 import {crossOriginScriptTagPlugin, htmlPlugin} from "./html.plugin";
 import {reactRefreshPlugin, terserPlugin} from "./ts.plugin";
-import {webpackHmrPlugin, webpackProgressPlugin} from "./webpack.plugin";
+import {webpackHmrPlugin, webpackProgressPlugin, webpackDefinePlugin} from "./webpack.plugin";
 import {workboxGenerateSWPlugin} from "./service-worker.plugin";
 
 /**
@@ -27,6 +27,7 @@ export class Plugin {
     static readonly webpack = {
         hmr: webpackHmrPlugin,
         progress: webpackProgressPlugin,
+        define: webpackDefinePlugin,
     };
 
     static readonly serviceWorker = {

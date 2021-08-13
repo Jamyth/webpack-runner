@@ -5,7 +5,12 @@ import path from "path";
 import {WebpackConfigGenerator} from "./WebpackConfigGenerator";
 import type {WebpackConfigGeneratorOptions} from "./WebpackConfigGenerator";
 
-interface WebpackRunnerConfigOption extends Pick<WebpackConfigGeneratorOptions, "projectDirectory" | "dynamicConfigResolvers" | "extraEntries" | "prioritizedExtensionPrefixes" | "verbose" | "tsconfigFilePath"> {
+interface WebpackRunnerConfigOption
+    extends Pick<
+        WebpackConfigGeneratorOptions,
+        // prettier-reserve
+        "projectDirectory" | "dynamicConfigResolvers" | "extraEntries" | "prioritizedExtensionPrefixes" | "verbose" | "tsconfigFilePath" | "defineVars"
+    > {
     projectDirectory: string;
     port: number;
     tsconfigFilePath?: string;
@@ -28,7 +33,7 @@ export class WebpackRunner {
         | undefined;
     private readonly logger = createConsoleLogger("Webpack Runner");
 
-    constructor({port, projectDirectory, apiProxy, tsconfigFilePath, externalModules, dynamicConfigResolvers, extraEntries, prioritizedExtensionPrefixes, verbose}: WebpackRunnerConfigOption) {
+    constructor({port, projectDirectory, apiProxy, tsconfigFilePath, externalModules, dynamicConfigResolvers, extraEntries, prioritizedExtensionPrefixes, verbose, defineVars}: WebpackRunnerConfigOption) {
         this.port = port;
         this.devServerConfigContentBase = path.join(projectDirectory, "static");
         this.apiProxy = apiProxy;
@@ -40,6 +45,7 @@ export class WebpackRunner {
             tsconfigFilePath,
             externalModules,
             verbose,
+            defineVars,
         }).development();
     }
 

@@ -1,7 +1,7 @@
 import {createConsoleLogger} from "../util/createConsoleLogger";
 import path from "path";
 import type webpack from "webpack";
-import yargs from "yargs";
+import {CoreUtil} from "../CoreUtil";
 import {Constant} from "../Constant";
 import type {EntryDescriptor, WebpackConfigGeneratorOptions} from "../type";
 import {ConfigEntryDescriptorsFactory} from "./ConfigEntryDescriptorsFactory";
@@ -19,17 +19,17 @@ import {WebpackResolveModulesFactory} from "./WebpackResolveModulesFactory";
  * Generates a webpack config with sane defaults.
  */
 export class WebpackConfigGenerator {
-    readonly env: string | null;
-    readonly projectDirectory: string;
-    readonly projectSrcDirectory: string;
-    readonly tsconfigFilepath: string;
-    readonly enableServiceWorker: boolean;
-
-    readonly enableProfiling: boolean;
-    readonly maxEntryPointKiloByte: number;
-    readonly maxAssetKiloByte: number;
-    readonly isFastMode: boolean;
-    readonly verbose: boolean;
+    private readonly env: string | null;
+    private readonly projectDirectory: string;
+    private readonly projectSrcDirectory: string;
+    private readonly tsconfigFilepath: string;
+    private readonly enableServiceWorker: boolean;
+    private readonly enableProfiling: boolean;
+    private readonly maxEntryPointKiloByte: number;
+    private readonly maxAssetKiloByte: number;
+    private readonly isFastMode: boolean;
+    private readonly verbose: boolean;
+    private readonly defineVars: {[key: string]: string};
 
     private readonly configEntryDescriptors: EntryDescriptor[];
     private readonly entry: NonNullable<webpack.Configuration["entry"]>;
@@ -42,17 +42,18 @@ export class WebpackConfigGenerator {
     private readonly logger = createConsoleLogger("WebpackConfigGenerator");
 
     constructor(private readonly options: WebpackConfigGeneratorOptions) {
-        this.env = (yargs.argv.env as string) ?? null;
+        this.env = CoreUtil.currentEnv();
         this.projectDirectory = options.projectDirectory;
         this.projectSrcDirectory = path.join(options.projectDirectory, "src");
         this.tsconfigFilepath = options.tsconfigFilePath ?? path.join(options.projectDirectory, "tsconfig.json");
         this.enableServiceWorker = options.enableServiceWorker ?? false;
 
-        this.enableProfiling = Boolean(yargs.argv.profile);
+        this.enableProfiling = CoreUtil.profilingEnabled();
+        this.isFastMode = CoreUtil.isFastMode();
         this.maxEntryPointKiloByte = options.maxEntryPointKiloByte ?? Constant.maxEntryPointKiloByte;
         this.maxAssetKiloByte = options.maxAssetKiloByte ?? Constant.maxAssetKiloByte;
-        this.isFastMode = yargs.argv.mode === "fast";
         this.verbose = options.verbose || false;
+        this.defineVars = options.defineVars || {};
 
         this.configEntryDescriptors = ConfigEntryDescriptorsFactory.generate({
             indexName: options.indexName || "index",
@@ -130,6 +131,7 @@ export class WebpackConfigGenerator {
                 Plugin.reactRefresh(),
                 Plugin.webpack.hmr(),
                 Plugin.webpack.progress({enableProfiling: false}),
+                Plugin.webpack.define(this.defineVars),
                 // prettier-format-preserve
             ],
             cache: {
@@ -191,6 +193,7 @@ export class WebpackConfigGenerator {
                 ...this.htmlWebpackPluginInstances,
                 Plugin.crossOriginScriptTag(),
                 Plugin.fileOutput.miniCssExtract({enableProfiling: this.enableProfiling}),
+                Plugin.webpack.define(this.defineVars),
                 ...(this.enableProfiling ? [Plugin.webpack.progress({enableProfiling: true})] : []), // disable to not bloat up CI logs
                 // prettier-format-preserve
                 ...(this.enableServiceWorker ? [Plugin.serviceWorker.generateSW()] : []),
