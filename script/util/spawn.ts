@@ -3,7 +3,7 @@ import chalk from "chalk";
 
 export function spawn(command: string, args: string[], errorMessage: string, ignoreError: boolean = false) {
     const isWindow = process.platform === "win32";
-    const result = spawnSync(isWindow ? command + ".cmd" : command, args);
+    const result = spawnSync(isWindow ? command + ".cmd" : command, args, {stdio: "inherit"});
     if (result.error) {
         console.error(result.error);
         process.exit(1);

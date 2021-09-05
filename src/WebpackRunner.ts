@@ -68,7 +68,9 @@ export class WebpackRunner {
                 });
             }
         } catch (error) {
-            this.logger.error(error);
+            if (error instanceof Error) {
+                this.logger.error(error);
+            }
             console.error(error);
             process.exit(1);
         }

@@ -4,6 +4,7 @@ import {WebpackConfigSerializationUtil} from "../WebpackConfigSerializationUtil"
 
 export function workboxGenerateSWPlugin(): webpack.WebpackPluginInstance {
     return WebpackConfigSerializationUtil.serializablePlugin("WorkboxGenerateSWWebpackPlugin", WorkboxPlugin.GenerateSW, {
+        cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
     });
