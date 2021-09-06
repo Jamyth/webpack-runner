@@ -19,6 +19,7 @@ interface WebpackRunnerConfigOption
         target: string;
         context: string[];
     };
+    https?: boolean;
 }
 
 export class WebpackRunner {
@@ -32,11 +33,13 @@ export class WebpackRunner {
           }
         | undefined;
     private readonly logger = createConsoleLogger("Webpack Runner");
+    private readonly https: boolean;
 
-    constructor({port, projectDirectory, apiProxy, tsconfigFilePath, externalModules, dynamicConfigResolvers, extraEntries, prioritizedExtensionPrefixes, verbose, defineVars}: WebpackRunnerConfigOption) {
+    constructor({port, projectDirectory, apiProxy, tsconfigFilePath, externalModules, dynamicConfigResolvers, extraEntries, prioritizedExtensionPrefixes, verbose, defineVars, https = true}: WebpackRunnerConfigOption) {
         this.port = port;
         this.devServerConfigContentBase = path.join(projectDirectory, "static");
         this.apiProxy = apiProxy;
+        this.https = https;
         this.webpackConfig = new WebpackConfigGenerator({
             projectDirectory,
             dynamicConfigResolvers,
@@ -79,7 +82,7 @@ export class WebpackRunner {
     private createInstance(): DevServer {
         return new DevServer(webpack(this.webpackConfig), {
             contentBase: this.devServerConfigContentBase,
-            https: true,
+            https: this.https,
             historyApiFallback: true,
             hot: true,
             compress: true,
