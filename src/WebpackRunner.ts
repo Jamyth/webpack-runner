@@ -52,24 +52,19 @@ export class WebpackRunner {
         }).development();
     }
 
-    run() {
+    async run() {
         try {
             this.logger.info(["Starting Webpack Dev Server on port", String(this.port)]);
             const server = this.createInstance();
-            server.listen(this.port, "0.0.0.0", (error) => {
-                if (error) {
-                    this.logger.error(error);
-                    console.error(error);
-                    process.exit(1);
-                }
-            });
             const signals: NodeJS.Signals[] = ["SIGINT", "SIGTERM"];
             for (const signal of signals) {
                 process.on(signal, () => {
-                    server.close();
+                    // force stop webpack dev server
+                    server.stopCallback(() => {});
                     process.exit();
                 });
             }
+            await server.start();
         } catch (error) {
             if (error instanceof Error) {
                 this.logger.error(error);
@@ -80,35 +75,46 @@ export class WebpackRunner {
     }
 
     private createInstance(): DevServer {
-        return new DevServer(webpack(this.webpackConfig), {
-            contentBase: this.devServerConfigContentBase,
-            https: this.https,
-            historyApiFallback: true,
-            hot: true,
-            compress: true,
-            overlay: {
-                errors: true,
+        return new DevServer(
+            {
+                port: this.port,
+                host: "0.0.0.0",
+                static: {
+                    directory: this.devServerConfigContentBase,
+                },
+                historyApiFallback: true,
+                https: true,
+                compress: true,
+                hot: true,
+                client: {
+                    overlay: {
+                        errors: true,
+                    },
+                },
+                devMiddleware: {
+                    stats: {
+                        colors: true,
+                        // https://github.com/webpack/webpack/blob/b65d060040a26255cbf6f50350fef4d4ffcce4d7/lib/stats/DefaultStatsPresetPlugin.js#L96-L103
+                        all: false,
+                        errors: true,
+                        errorsCount: true,
+                        warnings: true,
+                        warningsCount: true,
+                        logging: "warn",
+                    },
+                },
+                proxy: this.apiProxy
+                    ? [
+                          {
+                              context: this.apiProxy.context,
+                              target: this.apiProxy.target,
+                              secure: false,
+                              changeOrigin: true,
+                          },
+                      ]
+                    : undefined,
             },
-            stats: {
-                colors: true,
-                // https://github.com/webpack/webpack/blob/b65d060040a26255cbf6f50350fef4d4ffcce4d7/lib/stats/DefaultStatsPresetPlugin.js#L96-L103
-                all: false,
-                errors: true,
-                errorsCount: true,
-                warnings: true,
-                warningsCount: true,
-                logging: "warn",
-            },
-            proxy: this.apiProxy
-                ? [
-                      {
-                          context: this.apiProxy.context,
-                          target: this.apiProxy.target,
-                          secure: false,
-                          changeOrigin: true,
-                      },
-                  ]
-                : undefined,
-        });
+            webpack(this.webpackConfig)
+        );
     }
 }
