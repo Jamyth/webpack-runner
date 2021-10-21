@@ -79,6 +79,8 @@ export class WebpackBuilder {
                 }
 
                 if (stats.hasErrors() || stats.hasWarnings()) {
+                    this.logger.error("Webpack compiled with the following errors/warnings:");
+                    console.error(stats.toString("errors-warnings"));
                     process.exit(1);
                 }
 
