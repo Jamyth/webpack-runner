@@ -18,11 +18,15 @@ export default function ({types: t}: typeof babel): babel.PluginObj<State> {
                 const {
                     node: {
                         source: {value: importSource},
+                        specifiers: importSpecifiers,
                     },
                 } = path;
 
-                // TODO: Check Coil-React
-                if (!importSource.includes("injectLifecycle")) {
+                if (importSource !== "coil-react") {
+                    return;
+                }
+
+                if (!hasImportedInjectLifecycle(t, importSpecifiers)) {
                     return;
                 }
 
@@ -57,4 +61,32 @@ export default function ({types: t}: typeof babel): babel.PluginObj<State> {
             },
         },
     };
+}
+
+/**
+ * @param t `babel.types`
+ * @param importSpecifiers The "specifier" property of a `babel.types.ImportDeclaration` node
+ * @returns true if the import declaration includes the identifier `injectLifecycle`
+ */
+function hasImportedInjectLifecycle(t: typeof babel.types, importSpecifiers: babel.types.ImportDeclaration["specifiers"]): boolean {
+    const specifier = importSpecifiers.find((specifier) => {
+        // Check if it is one of:
+        // -> `import { <IMPORT_SPECIFIER_NODE> } from "coil-react";`
+        // -> `import DontCareDefaultIdent, { <IMPORT_SPECIFIER_NODE> } from "coil-react";`
+        if (t.isImportSpecifier(specifier)) {
+            const importedSpecifier = specifier.imported;
+            return t.isIdentifier(importedSpecifier) && importedSpecifier.name === "injectLifecycle";
+        }
+
+        // Check if it is:
+        // -> `import * as <IMPORT_NAMESPACE_SPECIFIER_NODE> from "coil-react";`
+        if (t.isImportNamespaceSpecifier(specifier)) {
+            // Not worth the effort to check if <IMPORT_NAMESPACE_SPECIFIER_NODE>.Module is used
+            // Maybe enforce "coil-react" should not be imported with a namespace with an ESLint rule?
+            return true;
+        }
+
+        return false;
+    });
+    return specifier !== undefined;
 }

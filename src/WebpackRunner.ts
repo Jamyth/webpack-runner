@@ -83,7 +83,9 @@ export class WebpackRunner {
                     directory: this.devServerConfigContentBase,
                 },
                 historyApiFallback: true,
-                https: true,
+                server: {
+                    type: "https",
+                },
                 compress: true,
                 hot: true,
                 client: {
